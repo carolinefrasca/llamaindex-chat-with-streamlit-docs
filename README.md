@@ -22,4 +22,4 @@ You can get your own OpenAI API key by following the following instructions:
 
 ## Try out the app
 
-Once the app is loaded, go ahead and enter your OpenAI API key and type a question in the text box and wait for a generated response.
+Once the app is loaded, enter your question about the Streamlit library and wait for a response.
