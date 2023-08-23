@@ -1,4 +1,4 @@
-streamlit
+streamlit-nightly
 openai
 llama-index
 nltk
