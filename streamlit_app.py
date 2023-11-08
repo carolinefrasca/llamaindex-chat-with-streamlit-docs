@@ -1,5 +1,5 @@
 import streamlit as st
-from llama_index import VectorStoreIndex, ServiceContext, Document
+from llama_index import VectorStoreIndex, ServiceContext, Document, set_global_service_context
 from llama_index.llms import OpenAI
 import openai
 from llama_index import SimpleDirectoryReader
@@ -19,28 +19,34 @@ def load_data():
     with st.spinner(text="Loading and indexing the Streamlit docs – hang tight! This should take 1-2 minutes."):
         reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
         docs = reader.load_data()
-        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="You are an expert on the Streamlit Python library and your job is to answer technical questions. Assume that all questions are related to the Streamlit Python library. Keep your answers technical and based on facts – do not hallucinate features."))
+        # service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="You are an expert on the Streamlit Python library and your job is to answer technical questions. Assume that all questions are related to the Streamlit Python library. Keep your answers technical and based on facts – do not hallucinate features."))
+        ctx = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0))
+        set_global_service_context(ctx)
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
         return index
 
 index = load_data()
+chat_engine = index.as_chat_engine()
+response = chat_engine.stream_chat("Hello!")
+for token in response.response_gen:
+    st.write(token, end="")
 
-if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
-        st.session_state.chat_engine = index.as_chat_engine(chat_mode="condense_question", streaming=True)
+# if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
+#         st.session_state.chat_engine = index.as_chat_engine(chat_mode="condense_question", streaming=True)
 
-if prompt := st.chat_input("Your question"): # Prompt for user input and save to chat history
-    st.session_state.messages.append({"role": "user", "content": prompt})
+# if prompt := st.chat_input("Your question"): # Prompt for user input and save to chat history
+#     st.session_state.messages.append({"role": "user", "content": prompt})
 
-for message in st.session_state.messages: # Display the prior chat messages
-    with st.chat_message(message["role"]):
-        st.write(message["content"])
+# for message in st.session_state.messages: # Display the prior chat messages
+#     with st.chat_message(message["role"]):
+#         st.write(message["content"])
 
-# If last message is not from assistant, generate a new response
-if st.session_state.messages[-1]["role"] != "assistant":
-    with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
-            response_stream = st.session_state.chat_engine.chat(prompt)
-            response_stream.print_response_stream()
+# # If last message is not from assistant, generate a new response
+# if st.session_state.messages[-1]["role"] != "assistant":
+#     with st.chat_message("assistant"):
+#         with st.spinner("Thinking..."):
+#             response_stream = st.session_state.chat_engine.chat(prompt)
+#             response_stream.print_response_stream()
             # st.write(response.response)
             # message = {"role": "assistant", "content": response.response}
             # st.session_state.messages.append(message) # Add response to message history
