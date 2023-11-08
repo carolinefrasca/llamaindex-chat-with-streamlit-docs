@@ -26,7 +26,7 @@ def load_data():
 index = load_data()
 
 if "chat_engine" not in st.session_state.keys(): # Initialize the chat engine
-        st.session_state.chat_engine = index.as_chat_engine(chat_mode="condense_question", verbose=True)
+        st.session_state.chat_engine = index.as_chat_engine(chat_mode="condense_question", streaming=True)
 
 if prompt := st.chat_input("Your question"): # Prompt for user input and save to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -39,7 +39,8 @@ for message in st.session_state.messages: # Display the prior chat messages
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            response = st.session_state.chat_engine.chat(prompt)
-            st.write(response.response)
-            message = {"role": "assistant", "content": response.response}
-            st.session_state.messages.append(message) # Add response to message history
+            response_stream = st.session_state.chat_engine.chat(prompt)
+            response_stream.print_response_stream()
+            # st.write(response.response)
+            # message = {"role": "assistant", "content": response.response}
+            # st.session_state.messages.append(message) # Add response to message history
