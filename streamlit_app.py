@@ -1,8 +1,14 @@
 import streamlit as st
-from llama_index.core.indices.vector_store.base import VectorStoreIndex, ServiceContext, Document
-from llama_index.llms.openai import OpenAI
+# from llama_index.core.indices.vector_store.base import VectorStoreIndex, ServiceContext, Document
+# from llama_index.llms.openai import OpenAI
 import openai
-from llama_index.core import SimpleDirectoryReader
+# from llama_index.core import SimpleDirectoryReader
+try:
+  from llama_index import VectorStoreIndex, ServiceContext, Document, SimpleDirectoryReader
+  from llama_index.llms.openai import OpenAI
+except ImportError:
+  from llama_index.core import VectorStoreIndex, ServiceContext, Document
+  from llama_index.core.llms.openai import OpenAI
 
 st.set_page_config(page_title="Chat with the Streamlit docs, powered by LlamaIndex", page_icon="🦙", layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = st.secrets.openai_key
