@@ -23,3 +23,15 @@ You can get your own OpenAI API key by following the following instructions:
 ## Try out the app
 
 Once the app is loaded, enter your question about the Streamlit library and wait for a response.
+
+## Getting started
+
+Get set up with your local environment.  
+If you dont ahve pipenv, [install it](https://pipenv.pypa.io/en/latest/installation.html)  
+```pipenv --python 3.10```
+
+Start using the pipenv environment just created. You should see "(llamaindex-chat-with-streamlit-docs)" at the start of your terminal prompt.
+```pipenv shell```
+
+Tell pipenv to take a look at the Pipfile and download the packages and their deps.
+```pipenv install```
