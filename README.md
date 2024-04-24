@@ -19,7 +19,8 @@ You can get your own OpenAI API key by following the following instructions:
 1. Go to https://platform.openai.com/account/api-keys.
 2. Click on the `+ Create new secret key` button.
 3. Next, enter an identifier name (optional) and click on the `Create secret key` button.
-4. Within the app, you will need to store this in .streamlit/secrets.toml
+4. Once you have your API key, you will need to store this in .streamlit/secrets.toml. IF this file doesnt exist, create it with the following
+```openai_key = "your-key-here-AND-MAKE-SURE-TO-ADD-FILE-TO-GITIGNORE"```
 
 > [!CAUTION]
 > You **NEED** to add ```.streamlit/secrets.toml``` to your .gitignore. Head over to the projects .gitignore and uncomment it.
@@ -33,10 +34,16 @@ Once the app is loaded, enter your question about the Streamlit library and wait
 ### Dev environment
 Get set up with your local environment.  
 If you dont ahve pipenv, [install it](https://pipenv.pypa.io/en/latest/installation.html)  
-```pipenv --python 3.10```
+```bash
+pipenv --python 3.10
+```
 
-Start using the pipenv environment just created. You should see "(llamaindex-chat-with-streamlit-docs)" at the start of your terminal prompt.
-```pipenv shell```
+Start using the pipenv environment just created. You should see "(llamaindex-chat-with-streamlit-docs)" at the start of your terminal prompt.  
+```bash
+pipenv shell
+```
 
-Tell pipenv to take a look at the Pipfile and download the packages and their deps.
-```pipenv install```
+Tell pipenv to take a look at the Pipfile and download the packages and their deps.  
+```bash
+pipenv install
+```
