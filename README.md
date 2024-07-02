@@ -25,7 +25,7 @@ You can get your own OpenAI API key by following the following instructions:
 Alternatively, you can use [Streamlit Community Cloud's secrets management feature](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/secrets-management) to add your API key via the web interface.
 
 > [!CAUTION]
-> Don't commit your secrets file to your GitHub repository. The `.gitignore` file includes `.streamlit/secrets.toml` and `secrets.toml`. 
+> Don't commit your secrets file to your GitHub repository. The `.gitignore` file in this repo includes `.streamlit/secrets.toml` and `secrets.toml`. 
 
 ## Try out the app
 
