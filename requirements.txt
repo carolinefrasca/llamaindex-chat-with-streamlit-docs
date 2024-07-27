@@ -4,3 +4,6 @@ llama-index
 llama-index-llms-openai
 nltk
 pypdf
+llama-index-vector-stores-milvus
+llama-index-embeddings-together 
+llama-index-llms-together
