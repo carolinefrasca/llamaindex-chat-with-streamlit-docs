@@ -1,44 +1,92 @@
 import streamlit as st
-from llama_index.llms.openai import OpenAI
-from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
-from llama_index.embeddings.together import TogetherEmbedding
+from llama_index.core import VectorStoreIndex, Settings
 from llama_index.llms.together import TogetherLLM
+from llama_index.embeddings.together import TogetherEmbedding
 from llama_index.vector_stores.milvus import MilvusVectorStore
-from llama_index.core import StorageContext, ServiceContext
+
+# Set page config with title and favicon
+st.set_page_config(
+    page_title="re:Connect, next gen AI therapist⚕️",
+    page_icon="assets/ReConnect_logo.png",
+    layout="centered", initial_sidebar_state="auto", menu_items=None
+)
+st.title("re:Connect, next gen AI therapist⚕️")
+st.info("Check out the full presentation pf this app in our [hackathon page](https://lablab.ai/event/llama-3-ai-hackathon/mirai/reconnect)", icon="📃")
+
+# Add custom CSS for styling
+st.markdown(
+    """
+    <style>
+    .main {
+        background-color: #f8f9fa;
+    }
+    .sidebar .sidebar-content {
+        background-color: #D91320;
+    }
+    .stButton>button {
+        color: #FFFFFF;
+        background-color: #D91320;
+    }
+    .stChatMessage--assistant {
+        background-color: #ffe5e5;
+    }
+    .stChatMessage--user {
+        background-color: #e0e0e0;
+    }
+    .title {
+        color: #08214D;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 
-st.set_page_config(page_title="Chat with the Streamlit docs, powered by LlamaIndex", page_icon="🦙", layout="centered", initial_sidebar_state="auto", menu_items=None)
-st.title("Chat with the Streamlit docs, powered by LlamaIndex 💬🦙")
-st.info("Check out the full tutorial to build this app in our [blog post](https://blog.streamlit.io/build-a-chatbot-with-custom-data-sources-powered-by-llamaindex/)", icon="📃")
+# Sidebar
+st.sidebar.image("assets/ReConnect_logo.png", use_column_width=True)
+st.sidebar.write("""
+**re:Connect** is an innovative AI product aimed at revolutionizing mental health support. By leveraging the power of advanced AI modeling, **re:Connect**  specializes in two leading therapeutic frameworks: Cognitive Behavioral Therapy (CBT) and Narrative Therapy. These specializations enable the AI to provide empathetic and personalized responses, ensuring realistic and meaningful interactions.
+""")
+
+st.sidebar.header("How to Use re:Connect")
+st.sidebar.write("""
+Freely engage with re:Connect in any way you want ! re:Connect is here to listen and assist you in any way possible.
+""")
+st.sidebar.markdown("### Social Links:")
+st.sidebar.write("🔗 [GitHub](https://github.com/chrisahn99/re-Connect/tree/feat/adapt_model)")
 
 if "messages" not in st.session_state.keys():  # Initialize the chat messages history
     st.session_state.messages = [
         {
             "role": "assistant",
-            "content": "Ask me a question about Streamlit's open-source Python library!",
+            "content": "Hi I'm re:Connect! How are you feeling today?",
         }
     ]
 
 @st.cache_resource(show_spinner=False)
 def load_data():
+    with st.spinner(text="re:Connect is waking up – hang tight!"):
 
-    Settings.embed_model = TogetherEmbedding(
-        model_name="togethercomputer/m2-bert-80M-8k-retrieval",
-        api_key= st.secrets.together_key
-    )
+        Settings.llm = TogetherLLM(
+            model="meta-llama/Llama-3-70b-chat-hf",
+            api_key=st.secrets.together_key
+        )
 
-    Settings.llm = TogetherLLM(
-        model="meta-llama/Llama-3-70b-chat-hf",
-        api_key=st.secrets.together_key
-    )
-    Settings.chunk_size=512
-    Settings.chunk_overlap = 100
+        Settings.embed_model = TogetherEmbedding(
+            model_name="togethercomputer/m2-bert-80M-8k-retrieval",
+            api_key= st.secrets.together_key
+        )
 
-    reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
-    docs = reader.load_data()
-    vector_index = VectorStoreIndex.from_documents(docs)
-    
-    return vector_index
+        milvus_store = MilvusVectorStore(
+            uri="https://in03-8d80e860f27e342.api.gcp-us-west1.zillizcloud.com",
+            token=st.secrets.milvus_key,
+            collection_name="llamacollection",
+            dim=768
+        )
+
+        vector_index = VectorStoreIndex.from_vector_store(vector_store=milvus_store)
+
+        return vector_index
 
 
 index = load_data()
@@ -88,7 +136,7 @@ if "chat_engine" not in st.session_state.keys():  # Initialize the chat engine
     )
 
 if prompt := st.chat_input(
-    "Ask a question"
+    "Feel free to talk about anything!"
 ):  # Prompt for user input and save to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
 
@@ -98,9 +146,10 @@ for message in st.session_state.messages:  # Write message history to UI
 
 # If last message is not from assistant, generate a new response
 if st.session_state.messages[-1]["role"] != "assistant":
-    with st.chat_message("assistant"):
-        response_stream = st.session_state.chat_engine.stream_chat(prompt)
-        st.write_stream(response_stream.response_gen)
-        message = {"role": "assistant", "content": response_stream.response}
-        # Add response to message history
-        st.session_state.messages.append(message)
+    with st.spinner("Generating response..."):
+        with st.chat_message("assistant", avatar=st.image("ReConnect_avatar.jpg")):
+            response_stream = st.session_state.chat_engine.stream_chat(prompt)
+            st.write_stream(response_stream.response_gen)
+            message = {"role": "assistant", "content": response_stream.response}
+            # Add response to message history
+            st.session_state.messages.append(message)
