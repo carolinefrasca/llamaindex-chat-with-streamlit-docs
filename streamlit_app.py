@@ -7,7 +7,7 @@ from llama_index.vector_stores.milvus import MilvusVectorStore
 # Set page config with title and favicon
 st.set_page_config(
     page_title="re:Connect, next gen AI therapist⚕️",
-    page_icon="assets/ReConnect_logo.png",
+    page_icon="https://raw.githubusercontent.com/chrisahn99/re-Connect/feat/adapt_model/assets/ReConnect_avatar.jpg",
     layout="centered", initial_sidebar_state="auto", menu_items=None
 )
 st.title("re:Connect, next gen AI therapist⚕️")
@@ -41,9 +41,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
 # Sidebar
-st.sidebar.image("assets/ReConnect_logo.png", use_column_width=True)
+st.sidebar.image("https://raw.githubusercontent.com/chrisahn99/re-Connect/feat/adapt_model/assets/ReConnect_logo.png", use_column_width=True)
 st.sidebar.write("""
 **re:Connect** is an innovative AI product aimed at revolutionizing mental health support. By leveraging the power of advanced AI modeling, **re:Connect**  specializes in two leading therapeutic frameworks: Cognitive Behavioral Therapy (CBT) and Narrative Therapy. These specializations enable the AI to provide empathetic and personalized responses, ensuring realistic and meaningful interactions.
 """)
@@ -147,7 +146,7 @@ for message in st.session_state.messages:  # Write message history to UI
 # If last message is not from assistant, generate a new response
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.spinner("Generating response..."):
-        with st.chat_message("assistant", avatar=st.image("ReConnect_avatar.jpg")):
+        with st.chat_message("assistant", avatar='https://raw.githubusercontent.com/chrisahn99/re-Connect/feat/adapt_model/assets/ReConnect_avatar.jpg'):
             response_stream = st.session_state.chat_engine.stream_chat(prompt)
             st.write_stream(response_stream.response_gen)
             message = {"role": "assistant", "content": response_stream.response}
